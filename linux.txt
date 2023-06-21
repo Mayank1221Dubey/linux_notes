@@ -1,0 +1,375 @@
+Open Source Software------->Open Source Software is a software with source code that anyone can inspact and modify.
+
+package----> In the context of software, a package refers to a bundled collection of files and data that make up a software application or program. It is a convenient way to distribute and install software on a computer system.
+
+/ ----> root directory
+
+/root/--->root user's home directory
+
+/home/vagrant ----> vagrant user's home directory
+ 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+whoami (tell who is the user)
+pwd (present working directory)
+ls (list content of directory)
+cat /etc/os-release
+sudo -i (to switch to root user)
+hostnamectl set-hostname kingkong2 and then run 'bash' command to change hostname.
+touch --->touch command update file timestamp and if file does not exist then it create file 
+touch command --->touch fileno{1..5}.txt --->it will create 5 files called ----->fileno1.txt,fileno2.txt,fileno3.txt,fileno4.txt,fileno5.txt
+mkdir -- creates folders . example -- mkdir folderNo{1..5} ->this will create 5 folders -->folderNo1,folderNo2,folderNo3,folderNo4,folderNo5
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+file command ---- to check type of file 
+
+example-----> crw--w----. 1 root tty 4, 21 Jun 20 06:19 tty21
+
+The "c" at the beginning of the entry indicates that it is a character device file. In Linux, character devices are used for accessing devices that provide a stream of characters or bytes. Some examples of character devices include serial ports, terminals.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+soft link ----------> sortcut of file or directory
+
+syntax of creating soft link------------------------> ln -s <where_file_or_directory_is_with_Path>  <where_you_want_shortcut_to_be_withPath>
+
+to delete a softlink we use ---------------->unlink <linkNAME>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+options with ls command -----> ls -lt    && ls -ltr
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+grep---->
+1)grep firewall anaconda-ks.cfg
+2)grep -i firewall anaconda-ks.cfg (-i to ignore case sensitivity)
+
+Note--->I am getting different output from both commands so what is the difference between 
+grep -R SELINUX /etc/ 
+and 
+grep -R SELINUX /etc/*
+Since I have used R option both should give same output ?? Answer----->* doesn't include hidden file
+
+Note----> if we try to grep or cp a symblic link which is broken then we get error ---> No such file or directory
+
+grep -vi firewall anaconda-ks.cfg  -----> this will show each line inside anaconda-ks.cfg file which does not include firewall
+
+grep -R SELINUX /etc/ &>/root/xxxxxxxxx.txt
+
+grep -R SELINUX /etc/ >/root/xxxxxxxxO.txt 2>xxxError.txt
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+more command in linux------>
+more command is used to view the contents of a file one page at a time. It allows you to scroll through the file and read its contents in a controlled manner. 
+1)Press the spacebar: Moves forward one page.
+2)Press Enter: Moves forward one line.
+3)Press q: Quits the more command and returns to the command prompt.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+head command --- head -2 anaconda-ks.cfg (to see first two lines)
+
+tail command ---- tail -5 anaconda-ks.cfg(to see last five lines)
+
+tail -f /var/log/messages -->to see live logs
+
+cut -d':' -f1 /etc/passwd
+
+awk -F':' '{print$1}' /etc/passwd
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+text manupulation in vi ----> :%s/kartik/mayank/g  ---> kartik will be replaced with mayank in all the places because we used g tag.
+note -- if we don't use g tag here then only the first occurances will be replaced.
+sed command----------->
+text manipulation with sed command----->
+sed 's/Mayank/MOON/g' viruses (This will not make change permanent,to make change permanent you have to use -i)
+example----->sed -i 's/Mayank/MOON/g' viruses
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+making 'weONE' file blank--------->cat /dev/null > weONE
+
+wc -l /etc/passwd 
+
+ls /etc/ | less | wc -l
+
+ls /etc/ | grep hostname
+
+ls /etc/ | grep host
+
+tail -20 /var/log/messages | grep -i vagrant
+
+find /etc/ -name host*
+
+updatedb and then locate command
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+User and group management-------------
+
+useradd jenkins
+useradd ansible
+useradd aws
+groupadd devops
+tail -5 /etc/passwd
+tail -5 /etc/group
+
+Note ------> if we want to add all three users jenkins,ansible and aws to 'devops' group , we have two ways ---> 'usermod'  and vim editing
+usermod command --------> usermod -aG devops ansible    ---> here G is for supplementary group ,g --->primary group
+note ---> usermod -g devops ansible , this command will change primary group of ansible to devops
+
+lsof -u vagrant------------------>this command will list all the files opened by vagrant user.
+
+userdel command------> to delete a user ------> userdel aws ---> this will delete aws user  (but users home directory will be there )
+if you want to delete user with it's home directory the you have to use -r --> userdel -r jenkins
+
+to delete a group we use 'groupdel' command-----------> groupdel devops
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Permissions---->
+
+on directory----->
+x---->it means we can do cd into directory.
+r---->it means we can do ls into directory.
+w--->it means we can create and delete files into directory.(we can make any changes into directory)
+
+--->sudo mkdir /opt/devopsdir
+--->ls -l /opt   ----->output---->drwxr-xr-x. 2 root root   6 Jun 21 04:32 devopsdir
+--->sudo useradd aws
+--->sudo useradd ansible
+--->sudo useradd jenkins
+--->sudo groupadd devops
+--->sudo useradd miles
+
+---->adding aws,ansible,jenkins into devops group--->using vim editor-----> sudo vim /etc/group
+---->ls -ld /opt/devopsdir/ ----> drwxr-xr-x. 2 root root 6 Jun 21 04:32 /opt/devopsdir/
+----> changing user and group ownership of devopsdir------->sudo chown -R ansible:devops /opt/devopsdir/
+---->ls -ld /opt/devopsdir/ --->output--->drwxr-xr-x. 2 ansible devops 6 Jun 21 04:32 /opt/devopsdir/
+---> NOTE--->-R is for recursive and ansible:devops means ----> userowner will be ansible and group owner will be devops
+---> NOTE -->with -R , Ownership of all the files inside devopsdir will be changed to userowner ansible and group owner devops 
+-->drwxr-xr-x. 2 ansible devops 6 Jun 21 04:32 /opt/devopsdir/ -> removing all permissions for other and adding write permissions for group
+--->sudo chmod 770 /opt/devopsdir/
+--->ls -ld /opt/devopsdir/ ----->drwxrwx---. 2 ansible devops 6 Jun 21 04:32 /opt/devopsdir/
+--->drwxr-xr-x. 2 ansible devops 6 Jun 21 04:32 /opt/devopsdir/ 
+Note ---> another way of removing all permissions for other and adding write permissions for group for /opt/devopsdir/
+----> sudo chmod o-rx,g+w /opt/devopsdir----->ls -ld /opt/devopsdir/--->drwxrwx---. 2 ansible devops 6 Jun 21 04:32 /opt/devopsdir/
+
+---->Examples:
+----> chmod ugo+r file: Grant read access to all for file
+----> chmod o-wx dir: Deny write and execute to others for dir
+
+--->sudo -i 
+--->su - miles
+---> cd /opt/devopsdir/ --> /opt/devopsdir/: Permission denied
+--->touch /opt/devopsdir/test1 ---> cannot touch ‘/opt/devopsdir/test1’: Permission denied
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+NOTE ----->special question and it answer--->
+
+[aws@server11 devopsdir]$ ll -d /opt ----> drwxr-xr-x. 6 root root 83 Jun 21 05:40 /opt
+
+ll -d /opt/devopsdir/ -----> drwxrwx---. 2 ansible devops 17 Jun 21 05:54 /opt/devopsdir/  (I changed user owner and group owner here)
+
+[aws@server11 ~]$ id aws --->uid=1004(aws) gid=1004(aws) groups=1004(aws),1006(devops)
+
+[aws@server11 ~]$ cd /opt/devopsdir/ --------> [aws@server11 devopsdir]$ touch xyz ---> [aws@server11 devopsdir]$ ls --->xyz
+
+since parent directory 'opt' does not have write permission for others , how aws is able to create file xyz
+
+
+Answer---->
+parent directory only requires r_x to go in and read ,child directory can have independent permission irrespective of parents.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Important things to remember related to permissions------------->
+
+1) only root can change file's owner.
+
+2)only root or the owner can change a file's group.
+
+3)ownership is changed with chown command --------> 
+sudo chown -R ansible:root /opt/devopsdir/  (here we are changing both user owner and group group owner of directory)
+
+4)group ownership is changed with chgrp command -------------------->
+sudo chgrp -R ansible /opt/devopsdir/ (here we are changing only group owner of directory )
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sudo ----> sudo gives power to a normal user to execute commands which is owned by root user.
+
+----> sudo -i ------> switching from normal user to root user. Only 'vagrant user can do that' not any other user.
+
+if other user try to do sudo we get an error ---> aws is not in the sudoers file.  This incident will be reported.
+
+Note----> if we want ,we can give any other user privilege to switch to root user or execute command with root privilege by adding the user into
+sudoers file . 
+
+---> ls -l /etc/sudoers -----------> -r--r-----. 1 root root 4328 Jan  5 03:35 /etc/sudoers
+
+[vagrant@server11 ~]$ sudo -i
+
+[root@server11 ~]# visudo
+added ansible--------->
+## Allow root to run any commands anywhere
+root    ALL=(ALL)       ALL
+ansible ALL=(ALL)       ALL
+Note -------------> after saving this file ansible will be able to do sudo -i and sudo yum install tmux but still we have to enter password of ansible
+
+Note---> after save and exit ,ansible wouldn't be asked for it's password,when it runs - sudo -i command.
+## Allow root to run any commands anywhere
+root    ALL=(ALL)       ALL
+ansible ALL=(ALL)       NOPASSWD: ALL
+save and exit
+
+Note ---> there is a chance that you have made syntax error in visudo file and you saved file and exit . If sudoers got non-functional you will
+be stuck ,so for safty ,there is another way to make change in sudoers file. So instead of editing sudoers file go to -- cd /etc/sudoers.d and do ls.
+
+[root@server11 ~]# cd /etc/sudoers.d
+[root@server11 sudoers.d]# ls
+vagrant
+Now we have to create our file here ------> using vi devops and we write --- > %devops   ALL=(ALL)       NOPASSWD: ALL              in it.
+Note -----> here %devops ---> % indicates that devops is group. now whoever is in devops group will be able to use sudo.
+[root@server11 sudoers.d]# vi devops
+[root@server11 sudoers.d]# cat devops
+%devops   ALL=(ALL)       NOPASSWD: ALL
+
+[root@server11 sudoers.d]# ls
+devops  vagrant
+
+
+NOTE-----giving normal user 'miles' ability to use sudo ------>
+[root@server11 ~]# cd /etc/sudoers.d/
+[root@server11 sudoers.d]# ls
+devops  miles  vagrant
+[root@server11 sudoers.d]# cat miles
+miles        ALL=(ALL)       NOPASSWD: ALL
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Package management----------------------------->
+ 
+manual way of setting up a package------>
+example --- let's say we want to install tree command------>
+step 1--------> search ---> tree rpm -----> check the website rpmfind.net (recommended site)----> look for centos 7 (because i am using centos7)
+step 2-------->left click on link and copy link address
+step 3-------->(on terminal) curl <past url> -o filename.rpm (here -o means output of link should be saved to a file - filename.rpm)
+example -->curl https://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/tree-1.6.0-10.el7.x86_64.rpm -o tree-1.6.0-10.el7.x86_64.rpm
+step 4-------->hit enter (if we do ls -> we see tree-1.6.0-10.el7.x86_64.rpm file in our current directory )
+step 6-------->rpm -ivh tree-1.6.0-10.el7.x86_64.rpm   and hit enter (installing rpm package)
+
+
+now lets try to install 'httpd'----------------->
+
+step 1----->
+curl https://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/httpd-2.4.6-95.el7.centos.x86_64.rpm -o httpd-2.4.6-95.el7.centos.x86_64.rpm
+step 2----->
+rpm -ivh httpd-2.4.6-95.el7.centos.x86_64.rpm
+
+we get error ----->error: Failed dependencies: 
+NOTE------> we have to install all dependencies for it and only after that I will be able to install httpd
+
+
+some other options with rpm----->
+
+rpm -Uvh {rpm-file} ----> to upgrade package
+
+rpm -ev {package}   ---->Erase/remove/ an installed package
+
+rpm -ev --nodeps {package} ---->Erase/remove/ an installed package without checking for dependencies
+
+rpm -qa --->Display list of all installed packages.
+
+rpm -qi  {package}----> Display info about package.
+
+rpm -qf {/path/to/file} --->Find out what package a file belongs to i.e. find what package owns the file 
+example of this------>
+rpm -qf /etc/passwd
+rpm -qf /bin/bash
+
+rpm -qa --last  ----->Display list of all recently installed RPMs
+
+rpm -qR {package}----------------->rpm -qR tcp_wrappers-7.6-77.el7.x86_64
+rpm -qc {pacakge-name} ----> Display list of configuration file(s) for a package --------->rpm -qc httpd
+rpm -qcf {/path/to/file} -----> Display list of configuration files for a command ----->rpm -qcf /bin/ls
+
+*************************************************************************************************************
+better way to manage your package is yum ---------- let's see yum------> 
+
+Note ---> automate the process of package installation. 
+yum has a configuration file ----------- [root@localhost ~]# cd /etc/yum.repos.d/ and now ls
+
+CentOS-Base.repo  CentOS-Debuginfo.repo  CentOS-Media.repo    CentOS-Vault.repo          epel.repo
+CentOS-CR.repo    CentOS-fasttrack.repo  CentOS-Sources.repo  CentOS-x86_64-kernel.repo  epel-testing.repo
+these files points to some repos on the internet and yum search for the software from them example ----> yum search httpd
+
+note --> if we want to install httpd ---> then we have to use command ------> yum install httpd 
+note --> yum install httpd package or any package with dependencies.
+note ---> to remove httpd package ---> yum remove httpd
+
+
+Now lets say I want to install jenkins (jenkins is third party software and to install it we have to follow instruction on it's website)
+example --> instructions for jenkins--->
+sudo wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+sudo yum upgrade
+# Add required dependencies for the jenkins package
+sudo yum install java-11-openjdk
+sudo yum install jenkins
+sudo systemctl daemon-reload
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+services--------->
+checking status of httpd service------> systemctl status httpd       ---> httpd is inactive
+to start httpd we can use this command ---->systemctl start httpd
+but if we reboot the system we will find that --->httpd is inactive again 
+systemctl enable httpd ---> httpd we will be active even after reboot.
+so if we want to start the httpd or any service and we want it to be active even after reboot the there is another command --->
+---->systemctl enable --now httpd ( this command is combination of -systemctl start httpd + systemctl enable httpd)
+
+to restart a service ------> systemctl restart httpd(or any service)
+after making changes in configuration ,we usually restart the service
+
+systemctl reload httpd ------> this will reload the configurations ,without restarting the services
+
+another command to check if service is active or not----> systemctl is-active httpdys
+
+to check if sevice is enabled or not------------->systemctl is-enabled httpd
+
+httpd configuration file ------------>cat /etc/systemd/system/multi-user.target.wants/httpd.service
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+archiving------------> command ----> tar -czvf totallogs10_06_2023.tar.gz /var/log
+
+c-->creat
+z-->compress
+v-->verbos
+f-->file
+totallogs10_06_2023 ---> just name (you can give any name you want to compressed file)
+.tar.gz-->extension of compressed file
+/var/log---------->path of directory or file you want archive of
+output file --->totallogs10_06_2023.tar.gz
+
+uncompressing this file -------->totallogs10_06_2023.tar.gz--->
+step 1)go inside the folder where you want to decompress the file
+step 2)tar -xzvf totallogs10_06_2023.tar.gz 
+note---> destination path is not given when we decompress the file.
+note ---> if we want to specify destination path then we have to use -C option example -------------->
+---------------> tar -xzvf backupOFetc12365.tar.gz -C /root/somewhereElse/
+
+practice archiving-->
+[root@localhost ~]# tar -czvf homeBackup.tar.tz /home/
+[root@localhost ~]# mkdir vagrantuser
+[root@localhost ~]# tar -xzvf homeBackup.tar.tz -C vagrantuser/
+
+zipping a file/direcotory------------->
+[root@localhost ~]# zip -r BOOTCompressed.zip /boot/
+[root@localhost ~]# mkdir compressed_folder;cd compressed_folder
+[root@localhost compressed_folder]# mv ../BOOTCompressed.zip ../compressed_folder/
+[root@localhost compressed_folder]# ls
+BOOTCompressed.zip
+[root@localhost compressed_folder]# unzip BOOTCompressed.zip (to unzip file ,zipped file must be there in folder)
+
+tar practice -->
+[root@localhost ~]# tar -czvf etctarball.tar.gz /etc/
+[root@localhost ~]# tar -xzvf etctarball.tar.gz -C uncompressed_folder/
+
+zipping --->
+[root@localhost ~]# zip -r BootCompressed.zip /boot/
+ cd uncompressed_folder/
+[root@localhost uncompressed_folder]# unzip /root/BootCompressed.zip
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
