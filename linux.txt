@@ -363,7 +363,7 @@ zipping --->
  cd uncompressed_folder/
 [root@localhost uncompressed_folder]# unzip /root/BootCompressed.zip
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+End of it
 
 
 
